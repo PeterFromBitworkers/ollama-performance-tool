@@ -2,7 +2,7 @@
 
 ## Conceptual Overview
 
-The Ollama Performance Measurement Tool is a specialized CLI application designed to capture and analyze the performance characteristics of Large Language Models (LLMs) during local inference. This tool addresses the critical need for quantitative measurement of LLM performance, particularly on Apple Silicon architectures with shared memory constraints.
+A tool for measuring the performance of Ollama LLM inference. It captures various metrics such as CPU usage, RAM consumption, token speed, and stores them in CSV files for later analysis. This is specialized on architectures running on apple silicon.
 
 ## Core Measurement Concepts
 
@@ -12,7 +12,7 @@ The tool implements a three-tiered measurement methodology to provide comprehens
 
 1. **System Resource Metrics** (ChatMetrics)
    - Captures the hardware resource utilization at regular intervals
-   - Records CPU, RAM, and swap memory consumption
+   - Records CPU, RAM, and swap memory consumptionpwd
    - Provides insights into the computational demands of inference
 
 2. **Token-Level Metrics** (TokenMetrics)
@@ -44,3 +44,122 @@ The configuration system is designed around flexibility and reproducibility:
 - **Session Identification**: Unique chat IDs enable longitudinal analysis across multiple inference sessions
 
 Please Note the Measurment Granularity is introducing a very lil portion on unprciseness for the time elapsing when the measurement is taking place, so we think a value of every 20 token might be reasonable. To monitor the uncertanty the lost time is still printed out to the cli however is not effective in the files.
+
+## Get Started
+
+### Prerequisites for macOS
+
+- Python 3.8 or higher
+- Ollama with an installed model (default: llama3.2)
+- Pip for installing dependencies
+
+#### Installing Python on macOS
+
+On a fresh macOS system:
+
+1. **Install Homebrew** (if not already installed):
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+   Follow the instructions to set up Homebrew.
+
+2. **Install required build dependencies**:
+   ```bash
+   brew install cmake pkg-config
+   ```
+   These are needed for building some of the Python dependencies.
+
+3. **Install Python**:
+   ```bash
+   brew install python
+   ```
+   This installs Python 3 and pip.
+
+4. **Verify the installation**:
+   ```bash
+   python3 --version
+   pip3 --version
+   ```
+
+### Installation
+
+#### Installing Ollama
+
+For macOS, the recommended way is to install Ollama via Homebrew:
+
+```bash
+# Install Ollama
+brew install ollama
+
+# Start the Ollama server
+ollama serve
+```
+
+Note: The `ollama serve` command will start the Ollama server and block the current terminal. You should keep this terminal window open while using Ollama.
+
+#### Running Ollama in a separate terminal
+
+For a better workflow, you'll need at least two terminal sessions:
+
+1. **Terminal 1**: Run the Ollama server
+   ```bash
+   ollama serve
+   ```
+
+2. **Terminal 2**: Pull the model and run your performance tool
+   ```bash
+   # First, pull the model you want to use
+   ollama pull llama3.2
+   
+   # Then navigate to your project directory and run the tool
+   cd /path/to/project
+   python main.py
+   ```
+
+#### Setting up the project
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/PeterFromBitworkers/ollama-performance-tool.git
+   cd ollama-performance-tool
+   ```
+
+2. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Configuration
+
+Configuration is done via the `Config` class in `main.py`. Here are some important settings:
+
+- `MODEL`: The Ollama model to use (default: "llama3.2")
+- `CTX`: Context size for the model (default: 2048)
+- `SYSTEM_MEASUREMENT_INTERVAL`: Interval for system metrics (default: every 20 tokens)
+- `MODEL_FAMILY`: HuggingFace model for token counting
+
+### Usage
+
+Start the tool with:
+
+```bash
+python main.py
+```
+
+A chat interface will open where you can interact with the model. During interaction, metrics are captured and stored in CSV files in the `metrics` folder:
+
+- `system.csv`: System metrics (CPU, RAM)
+- `message_results.csv`: Message metrics (token count, speed)
+- `tokens.csv`: Token generation metrics
+
+End the chat by typing "exit", "quit", or "q".
+
+### Analyzing Results
+
+The generated CSV files can be analyzed using tools like Python Pandas, Excel, or Grafana to gain performance insights.

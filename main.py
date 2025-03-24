@@ -7,10 +7,6 @@ from dataclasses import dataclass
 from typing import List, Dict, Any
 from transformers import AutoTokenizer
 
-# work on readme
-# fill requirments.txt
-# git
-
 # Configuration as a simple class instead of globals
 @dataclass
 class Config:
