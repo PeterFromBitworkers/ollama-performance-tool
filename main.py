@@ -258,6 +258,18 @@ def simple_chat():
   
     # Initialize the chat session
     chat_messages = []  # actual chat messages as by model api
+
+
+    # Add system message from prompt.txt file in doc_content folder
+    with open(os.path.join("doc_content", "prompt.txt"), "r") as file:
+        message = file.read()
+    system_message = {
+        "role": "system",
+        "content": message
+    }
+    
+    chat_messages.append(system_message)
+
     system_metrics_counter = 0
     
     print("-" * 40)
@@ -270,7 +282,7 @@ def simple_chat():
         time_user_entered_input = time.time() # user hits enter after typing the message
 
         # need ONE for the whole chat (not per message)
-        if len(chat_messages) == 0:
+        if len(chat_messages) == 1:
             chat_id = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + user_input[:10]
 
         if user_input.lower() in ["exit", "quit", "q"]:
